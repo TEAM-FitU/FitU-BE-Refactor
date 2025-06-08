@@ -44,12 +44,21 @@ public class Clothes extends BaseEntity {
 
     @Builder
     public Clothes(final String userId, final String imageUrl,
-                   final Type type, final Category category, final Pattern pattern, final Color color) {
+            final Type type, final Category category, final Pattern pattern, final Color color) {
         this.userId = userId;
         this.imageUrl = imageUrl;
         this.type = type;
         this.category = category;
         this.pattern = pattern;
         this.color = color;
+    }
+
+    public void updateClothes(String newImageUrl, Type newType, Category newCategory, Pattern newPattern,
+            Color newColor) {
+        this.imageUrl = newImageUrl;
+        this.type = newType;
+        this.category = newCategory;
+        this.pattern = newPattern;
+        this.color = newColor;
     }
 }

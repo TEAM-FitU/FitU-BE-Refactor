@@ -6,10 +6,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        log.error("handleMaxUploadSizeExceededException", e);
+
+        final ErrorCode errorCode = ErrorCode.INVALID_INPUT_VALUE;
+        final ErrorResponse errorResponse = ErrorResponse.of(errorCode);
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorCode.getStatus()));
+    }
 
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException e) {
