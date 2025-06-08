@@ -85,11 +85,11 @@ public class ClothesS3Service {
 
             final String targetKey = targetDirectory + "/" + fileName;
 
-            // 임시 버킷에서 목적 버킷으로 복사, 삭제는 S3 생명주기 사용
+            // 임시 버킷에서 최종 버킷으로 복사, 삭제는 S3 생명주기 사용
             CopyObjectRequest copyObjectRequest = CopyObjectRequest.builder()
                     .sourceBucket(tempBucketName) // 임시 버킷
                     .sourceKey(sourceKey)
-                    .destinationBucket(bucketName) // 목적 버킷
+                    .destinationBucket(bucketName) // 최종 버킷
                     .destinationKey(targetKey)
                     .build();
 
