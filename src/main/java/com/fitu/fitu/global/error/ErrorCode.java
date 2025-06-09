@@ -14,8 +14,11 @@ public enum ErrorCode {
     USER_NOT_FOUND(400, "USER001", "User Not Found"),
 
     /* CLOTHES ERROR */
+    CLOTHES_NOT_FOUND(400, "CLOTHES001", "Clothes Not Found"),
 
     /* RECOMMENDATION ERROR */
+    NO_RECOMMENDATION(500, "RECOMMENDATION001", "No Recommendation"),
+    AI_RECOMMENDATION_SERVER_ERROR(500, "RECOMMENDATION002", "AI Recommendation Server Error");
 
     /* S3 ERROR */
     S3_UPLOAD_FAILED(500, "S3001", "Failed to upload file to S3"),

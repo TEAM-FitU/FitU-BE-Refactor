@@ -3,6 +3,7 @@ package com.fitu.fitu.domain.recommendation.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,8 +13,22 @@ import lombok.NoArgsConstructor;
 public class Content {
 
     @Column(nullable = false, columnDefinition = "LONGTEXT")
-    private String text;
+    private String clothesCombination;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
+    private String selectedClothes;
+
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
+    private String description;
+
+    @Column
     private String imageUrl;
+
+    @Builder
+    public Content(final String clothesCombination, final String selectedClothes, final String description, final String imageUrl) {
+        this.clothesCombination = clothesCombination;
+        this.selectedClothes = selectedClothes;
+        this.description = description;
+        this.imageUrl = imageUrl;
+    }
 }
