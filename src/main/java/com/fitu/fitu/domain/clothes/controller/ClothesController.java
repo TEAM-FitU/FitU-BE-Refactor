@@ -21,12 +21,12 @@ import com.fitu.fitu.domain.clothes.dto.request.ClothesAndUserInfoRequest;
 import com.fitu.fitu.domain.clothes.dto.request.ClothesFilterRequest; 
 import com.fitu.fitu.domain.clothes.dto.request.ClothesUpdateRequest;
 import com.fitu.fitu.domain.clothes.dto.request.NewClothesRequest;
-import com.fitu.fitu.domain.clothes.dto.response.AiAnalysisResponse;
 import com.fitu.fitu.domain.clothes.dto.response.ClothesListResponse;
 import com.fitu.fitu.domain.clothes.dto.response.ClothesSuccessResponse;
 import com.fitu.fitu.domain.clothes.dto.response.ClothesUpdateResponse;
 import com.fitu.fitu.domain.clothes.service.ClothesService;
 import com.fitu.fitu.domain.clothes.service.RegistrationOrchestrator;
+import com.fitu.fitu.infra.ai.clothes.AiAnalysisResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

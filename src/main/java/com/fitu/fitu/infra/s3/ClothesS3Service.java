@@ -27,13 +27,13 @@ public class ClothesS3Service {
     @Qualifier("clothesS3Client")
     private final S3Client s3Client;
 
-    @Value("${aws.s3.bucket}")
+    @Value("${team3.aws.s3.bucket}")
     private String bucketName;
 
-    @Value("${aws.s3.temp-bucket}")
+    @Value("${team3.aws.s3.temp-bucket}")
     private String tempBucketName;
 
-    @Value("${aws.s3.region}")
+    @Value("${team3.aws.region}")
     private String region;
 
     public String uploadFile(final MultipartFile file, final String directory) {

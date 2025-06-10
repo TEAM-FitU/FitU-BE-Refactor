@@ -1,4 +1,4 @@
-package com.fitu.fitu.domain.clothes.dto.response;
+package com.fitu.fitu.infra.ai.clothes;
 
 import java.util.List;
 

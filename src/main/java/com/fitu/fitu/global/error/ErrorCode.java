@@ -19,6 +19,7 @@ public enum ErrorCode {
     CLOTHES_AI_ANALYSIS_FAILED(500, "CLOTHES004", "의류 AI 분석에 실패했습니다"),
     CLOTHES_IMAGE_PROCESSING_ERROR(500, "CLOTHES005", "의류 이미지 처리 중 오류가 발생했습니다"),
     CLOTHES_INVALID_CLOTHES_COMBINATION(400, "CLOTHES006", "유효하지 않은 의류 조합입니다"),
+    CLOTHES_INVALID_CLOTHES_TYPE(400, "CLOTHES007", "의류 이미지가 아닙니다"),
     CLOTHES_ATTRIBUTES_REQUIRED(400, "CLOTHES008", "의류 속성이 필요합니다"),
 
     /* S3 ERROR */

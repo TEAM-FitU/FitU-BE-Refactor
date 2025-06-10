@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class ClothesAiModelClient {
 
-    @Qualifier("clothesRestClient")
     private final RestTemplate restTemplate;
 
     private final ObjectMapper objectMapper;
