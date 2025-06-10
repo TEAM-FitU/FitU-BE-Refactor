@@ -13,8 +13,6 @@ import com.fitu.fitu.domain.clothes.dto.request.ClothesFilterRequest;
 import com.fitu.fitu.domain.clothes.dto.request.ClothesRequest;
 import com.fitu.fitu.domain.clothes.dto.request.ClothesUpdateRequest;
 import com.fitu.fitu.domain.clothes.dto.request.NewClothesRequest;
-import com.fitu.fitu.domain.clothes.dto.response.AiAnalysisResponse;
-import com.fitu.fitu.domain.clothes.dto.response.AiClothesAnalysisResult;
 import com.fitu.fitu.domain.clothes.dto.response.ClothesListResponse;
 import com.fitu.fitu.domain.clothes.dto.response.ClothesUpdateResponse;
 import com.fitu.fitu.domain.clothes.entity.Clothes;
@@ -26,6 +24,8 @@ import com.fitu.fitu.domain.clothes.repository.ClothesRepository;
 import com.fitu.fitu.global.error.ErrorCode;
 import com.fitu.fitu.global.error.exception.BusinessException;
 import com.fitu.fitu.infra.ai.ClothesAiModelClient;
+import com.fitu.fitu.infra.ai.clothes.AiAnalysisResponse;
+import com.fitu.fitu.infra.ai.clothes.AiClothesAnalysisResult;
 import com.fitu.fitu.infra.s3.ClothesS3Service;
 
 import lombok.RequiredArgsConstructor;
@@ -232,7 +232,7 @@ public class ClothesService {
 
             // 기존 의류 존재 여부 확인
             final Clothes existingClothes = clothesRepository.findById(clothesId)
-                    .orElseThrow(() -> new BusinessException(ErrorCode.CLOTHES_NOT_FOUND));
+                    .orElseThrow(() -> new BusinessException(ErrorCode.CLOTHES_NOT_FOUND_BY_ID));
 
             // 접근 권한 확인
             if (!existingClothes.getUserId().equals(userId)) {
@@ -290,7 +290,7 @@ public class ClothesService {
     public void deleteClothes(final Long clothesId, final String userId) {
         try {
             final Clothes clothes = clothesRepository.findById(clothesId)
-                    .orElseThrow(() -> new BusinessException(ErrorCode.CLOTHES_NOT_FOUND));
+                    .orElseThrow(() -> new BusinessException(ErrorCode.CLOTHES_NOT_FOUND_BY_ID));
             if (!clothes.getUserId().equals(userId)) {
                 throw new BusinessException(ErrorCode.CLOTHES_ACCESS_DENIED);
             }

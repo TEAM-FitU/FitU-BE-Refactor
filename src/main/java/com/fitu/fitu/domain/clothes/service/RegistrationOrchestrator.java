@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fitu.fitu.domain.clothes.dto.request.ClothesAndUserInfoRequest;
 import com.fitu.fitu.domain.clothes.dto.request.ClothesRequest;
-import com.fitu.fitu.domain.clothes.entity.enums.Type;
+import com.fitu.fitu.domain.clothes.entity.enums.Type; 
+import com.fitu.fitu.domain.user.service.UserService;
 import com.fitu.fitu.global.error.ErrorCode;
 import com.fitu.fitu.global.error.exception.BusinessException;
 import com.fitu.fitu.infra.s3.ClothesS3Service;
@@ -24,7 +25,7 @@ public class RegistrationOrchestrator {
 
     private final ClothesService clothesService;
     private final ClothesS3Service s3Service;
-    // private final UserService userService;
+    private final UserService userService;
 
     /*
      * 최종 의류 및 사용자 정보 저장을 오케스트레이션
@@ -35,7 +36,8 @@ public class RegistrationOrchestrator {
         try {
 
             validateClothesItems(request.clothesItems());
-            // TODO: 사용자 UserService 연동 필요
+
+            String userId = userService.registerProfile(request.userProfileInfo()).getId();
 
             for (ClothesRequest clothesItem : request.clothesItems()) {
 
@@ -50,7 +52,7 @@ public class RegistrationOrchestrator {
                 }
 
                 clothesService.createClothes(
-                        "9f4d3e1a-7c42-4c23-9f36-6beecb27b214",
+                        userId,
                         clothesImageUrl,
                         clothesItem.type(),
                         clothesItem.category(),
@@ -58,7 +60,7 @@ public class RegistrationOrchestrator {
                         clothesItem.color());
             }
 
-            return "9f4d3e1a-7c42-4c23-9f36-6beecb27b214";
+            return userId;
 
         } catch (Exception e) {
             log.error("의류 및 사용자 정보 저장 중 오류 발생 - 오류: {}", e.getMessage(), e);

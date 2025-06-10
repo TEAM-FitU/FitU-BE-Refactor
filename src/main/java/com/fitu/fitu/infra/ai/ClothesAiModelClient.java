@@ -12,11 +12,11 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fitu.fitu.domain.clothes.dto.request.AiClothesAnalysisRequest; 
-import com.fitu.fitu.domain.clothes.dto.response.AiClothesAnalysisResult;
-import com.fitu.fitu.domain.clothes.dto.response.AiClothesAnalysisWrapper;
 import com.fitu.fitu.global.error.ErrorCode;
 import com.fitu.fitu.global.error.exception.BusinessException;
+import com.fitu.fitu.infra.ai.clothes.AiClothesAnalysisRequest;
+import com.fitu.fitu.infra.ai.clothes.AiClothesAnalysisResult;
+import com.fitu.fitu.infra.ai.clothes.AiClothesAnalysisWrapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
