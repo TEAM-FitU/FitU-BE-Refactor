@@ -6,22 +6,23 @@ import com.fitu.fitu.domain.clothes.entity.enums.Color;
 import com.fitu.fitu.domain.clothes.entity.enums.Pattern;
 import com.fitu.fitu.domain.clothes.entity.enums.Type;
 
-public record AiAnalysisResult(
+public record AiClothesAnalysisResult(
         boolean isValidClothes,
         @JsonProperty("category") Type type,
         @JsonProperty("subcategory") Category category,
         Pattern pattern,
         @JsonProperty("tone") Color color,
         @JsonProperty("segmented_image_path") String segmentedImagePath,
-        String errorMessage) {
+        String errorMessage
+) {
 
-    public static AiAnalysisResult success(final Type type, final Category category, final Pattern pattern,
+    public static AiClothesAnalysisResult success(final Type type, final Category category, final Pattern pattern,
             final Color color,
             final String segmentedImagePath) {
-        return new AiAnalysisResult(true, type, category, pattern, color, segmentedImagePath, null);
+        return new AiClothesAnalysisResult(true, type, category, pattern, color, segmentedImagePath, null);
     }
 
-    public static AiAnalysisResult failure(final String errorMessage) {
-        return new AiAnalysisResult(false, null, null, null, null, null, errorMessage);
+    public static AiClothesAnalysisResult failure(final String errorMessage) {
+        return new AiClothesAnalysisResult(false, null, null, null, null, null, errorMessage);
     }
 }

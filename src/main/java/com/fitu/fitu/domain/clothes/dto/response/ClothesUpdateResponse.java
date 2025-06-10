@@ -13,7 +13,8 @@ public record ClothesUpdateResponse(
         Pattern pattern,
         Color color,
         String message,
-        boolean success) {
+        boolean success
+) {
 
     public static ClothesUpdateResponse success(final Long clothesId, final String clothesImageUrl,
             final Type type, final Category category, final Pattern pattern, final Color color,

@@ -13,5 +13,7 @@ public record ClothesRequest(
         Category category,
         Type type,
         Pattern pattern,
-        Color color) {
+        Color color
+) {
+        
 }

@@ -15,8 +15,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 
-@Repository
 @RequiredArgsConstructor
+@Repository
 public class ClothesCustomRepositoryImpl implements ClothesCustomRepository {
 
     private final JPAQueryFactory queryFactory;

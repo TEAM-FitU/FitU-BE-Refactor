@@ -12,18 +12,18 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fitu.fitu.domain.clothes.dto.request.AiClothesAnalysisRequest;
-import com.fitu.fitu.domain.clothes.dto.response.AiAnalysisResult;
-import com.fitu.fitu.domain.clothes.dto.response.AiAnalysisWrapper;
+import com.fitu.fitu.domain.clothes.dto.request.AiClothesAnalysisRequest; 
+import com.fitu.fitu.domain.clothes.dto.response.AiClothesAnalysisResult;
+import com.fitu.fitu.domain.clothes.dto.response.AiClothesAnalysisWrapper;
 import com.fitu.fitu.global.error.ErrorCode;
 import com.fitu.fitu.global.error.exception.BusinessException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Component
 public class ClothesAiModelClient {
 
     @Qualifier("clothesRestClient")
@@ -34,7 +34,7 @@ public class ClothesAiModelClient {
     @Value("${ai.model.base-url}")
     private String aiModelBaseUrl;
 
-    public AiAnalysisResult analyzeClothes(final String clothesImageUrl) {
+    public AiClothesAnalysisResult analyzeClothes(final String clothesImageUrl) {
         try {
             final AiClothesAnalysisRequest aiClothesAnalysisRequest = new AiClothesAnalysisRequest(clothesImageUrl);
 
@@ -45,24 +45,24 @@ public class ClothesAiModelClient {
 
             final HttpEntity<String> requestEntity = new HttpEntity<>(jsonRequestBody, headers);
 
-            final ResponseEntity<AiAnalysisWrapper> responseEntity = restTemplate.postForEntity(
+            final ResponseEntity<AiClothesAnalysisWrapper> responseEntity = restTemplate.postForEntity(
                     aiModelBaseUrl + "/clothes/image-analysis",
                     requestEntity,
-                    AiAnalysisWrapper.class);
+                    AiClothesAnalysisWrapper.class);
 
-            final AiAnalysisWrapper aiResponse = responseEntity.getBody();
+            final AiClothesAnalysisWrapper aiResponse = responseEntity.getBody();
 
             if (aiResponse == null || aiResponse.analyses() == null || aiResponse.analyses().isEmpty()) {
-                return AiAnalysisResult.failure("AI 의류 분석 결과가 없음.");
+                return AiClothesAnalysisResult.failure("AI 의류 분석 결과가 없음.");
             }
 
             if (aiResponse.status().equals("single_cloth")) {
-                AiAnalysisResult singleClothesResponse = aiResponse.analyses().get(0);
-                return AiAnalysisResult.success(singleClothesResponse.type(),
+                AiClothesAnalysisResult singleClothesResponse = aiResponse.analyses().get(0);
+                return AiClothesAnalysisResult.success(singleClothesResponse.type(),
                         singleClothesResponse.category(), singleClothesResponse.pattern(),
                         singleClothesResponse.color(), singleClothesResponse.segmentedImagePath());
             } else {
-                return AiAnalysisResult.failure(aiResponse.status());
+                return AiClothesAnalysisResult.failure(aiResponse.status());
             }
 
         } catch (JsonProcessingException e) {

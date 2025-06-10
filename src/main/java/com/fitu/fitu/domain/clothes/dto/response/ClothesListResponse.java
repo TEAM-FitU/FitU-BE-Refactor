@@ -14,5 +14,7 @@ public record ClothesListResponse(
         Category category,
         Pattern pattern,
         Color color,
-        LocalDateTime createdAt) {
+        LocalDateTime createdAt
+) {
+        
 }

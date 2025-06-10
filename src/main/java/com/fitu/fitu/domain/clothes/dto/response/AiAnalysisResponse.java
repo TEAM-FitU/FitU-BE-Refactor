@@ -10,7 +10,8 @@ public record AiAnalysisResponse(
         Category category,
         Pattern pattern,
         Color color,
-        String imageUrl) {
+        String imageUrl
+) {
  
     public static AiAnalysisResponse success(final Type type, final Category category, final Pattern pattern,
             final Color color,

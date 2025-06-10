@@ -21,21 +21,19 @@ public enum Category {
     SKIRT, // 치마
     SLACKS, // 슬랙스(정장 바지)
     DRESS, // 드레스
-    JUMPSUIT; // 점프수트
+    JUMPSUIT, // 점프수트
+    MANUAL_SELECTION; // 매핑되는 값이 없을 때 수동 선택을 위한 기본값
 
     @JsonCreator
-    public static Category fromJson(String jsonValue) {
-        if ("onepiece-dress-".equals(jsonValue) || "onepiece-dress".equals(jsonValue)) {
-            return DRESS;
-        } else if ("onepiece-jumpsuite-".equals(jsonValue) || "onepiece-jumpsuite".equals(jsonValue)) {
-            return JUMPSUIT;
-        } else if ("t-shirt".equals(jsonValue)) {
-            return TSHIRT;
-        } else {
-            return Arrays.stream(Category.values())
-                    .filter(ct -> ct.name().equalsIgnoreCase(jsonValue))
+    public static Category fromJson(final String jsonValue) {
+        return switch (jsonValue) {
+            case "onepiece-dress-", "onepiece-dress" -> DRESS;
+            case "onepiece-jumpsuite-", "onepiece-jumpsuite" -> JUMPSUIT;
+            case "t-shirt" -> TSHIRT;
+            default -> Arrays.stream(Category.values())
+                    .filter(category -> category.name().equalsIgnoreCase(jsonValue))
                     .findFirst()
-                    .orElse(null);
-        }
+                    .orElse(MANUAL_SELECTION);
+        };
     }
 }

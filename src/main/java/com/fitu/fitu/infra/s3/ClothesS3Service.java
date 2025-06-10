@@ -19,9 +19,9 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Service
 public class ClothesS3Service {
 
     @Qualifier("clothesS3Client")

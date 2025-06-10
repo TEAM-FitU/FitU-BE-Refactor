@@ -9,13 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fitu.fitu.domain.clothes.dto.request.ClothesAnalysisRequest;
 import com.fitu.fitu.domain.clothes.dto.request.ClothesFilterRequest;
 import com.fitu.fitu.domain.clothes.dto.request.ClothesRequest;
 import com.fitu.fitu.domain.clothes.dto.request.ClothesUpdateRequest;
-import com.fitu.fitu.domain.clothes.dto.request.newClothesRequest;
+import com.fitu.fitu.domain.clothes.dto.request.NewClothesRequest;
 import com.fitu.fitu.domain.clothes.dto.response.AiAnalysisResponse;
-import com.fitu.fitu.domain.clothes.dto.response.AiAnalysisResult;
+import com.fitu.fitu.domain.clothes.dto.response.AiClothesAnalysisResult;
 import com.fitu.fitu.domain.clothes.dto.response.ClothesListResponse;
 import com.fitu.fitu.domain.clothes.dto.response.ClothesUpdateResponse;
 import com.fitu.fitu.domain.clothes.entity.Clothes;
@@ -32,24 +31,24 @@ import com.fitu.fitu.infra.s3.ClothesS3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Service
 public class ClothesService {
 
     private final ClothesRepository clothesRepository;
     private final ClothesS3Service s3Service;
     private final ClothesAiModelClient aiModelClient;
 
-    public AiAnalysisResponse analyzeClothes(final ClothesAnalysisRequest request) {
+    public AiAnalysisResponse analyzeClothes(final MultipartFile clothesImage) {
 
-        final String contentType = request.clothesImage().getContentType();
-        final String originalFileName = request.clothesImage().getOriginalFilename();
+        final String contentType = clothesImage.getContentType();
+        final String originalFileName = clothesImage.getOriginalFilename();
         final String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase();
 
         final List<String> allowedExtensions = List.of("jpg", "jpeg", "png", "webp");
 
-        if (request.clothesImage() == null || request.clothesImage().isEmpty() || contentType == null
+        if (clothesImage == null || clothesImage.isEmpty() || contentType == null
                 || !contentType.startsWith("image/")
                 || !allowedExtensions.contains(extension)) {
             log.error("의류 이미지 검증 실패 - 빈 파일 이거나 잘못된 파일 형식",
@@ -57,10 +56,10 @@ public class ClothesService {
             throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
         }
 
-        final String clothesImageUrl = s3Service.uploadFile(request.clothesImage(), "temp");
+        final String clothesImageUrl = s3Service.uploadFile(clothesImage, "temp");
 
         // Ai 모델로 의류 분석
-        final AiAnalysisResult analysisResult = aiModelClient.analyzeClothes(clothesImageUrl);
+        final AiClothesAnalysisResult analysisResult = aiModelClient.analyzeClothes(clothesImageUrl);
 
         if (!analysisResult.isValidClothes()) {
             log.error("의류 Ai 분석 오류: {}", analysisResult.errorMessage());
@@ -93,7 +92,7 @@ public class ClothesService {
     }
 
     @Transactional
-    public void saveUserClothes(final String userId, final newClothesRequest request) {
+    public void saveUserClothes(final String userId, final NewClothesRequest request) {
 
         try {
 
@@ -182,6 +181,11 @@ public class ClothesService {
     @Transactional(readOnly = true)
     public List<ClothesListResponse> getUserClothesListWithFilters(final String userId,
             final ClothesFilterRequest filterRequest) {
+
+        if (userId == null || userId.isBlank()) {
+            log.error("사용자 ID가 비어있음");
+            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
+        }
 
         try {
             List<Clothes> clothesList;

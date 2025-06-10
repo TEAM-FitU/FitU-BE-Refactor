@@ -53,8 +53,8 @@ public class Clothes extends BaseEntity {
         this.color = color;
     }
 
-    public void updateClothes(String newImageUrl, Type newType, Category newCategory, Pattern newPattern,
-            Color newColor) {
+    public void updateClothes(final String newImageUrl, final Type newType, final Category newCategory, final Pattern newPattern,
+            final Color newColor) {
         this.imageUrl = newImageUrl;
         this.type = newType;
         this.category = newCategory;

@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fitu.fitu.domain.user.entity.enums.Gender;
 import com.fitu.fitu.domain.user.entity.enums.SkinTone;
 
-public record FinalRegistrationRequest(
+public record ClothesAndUserInfoRequest(
         // 사용자 프로필 정보
         MultipartFile userBodyImage, // 선택값
         Integer age,
@@ -16,5 +16,7 @@ public record FinalRegistrationRequest(
         Integer weight,
         SkinTone skinTone,
         // 의류 아이템 정보
-        List<ClothesRequest> clothesItems)  {
+        List<ClothesRequest> clothesItems
+) {
+
 }

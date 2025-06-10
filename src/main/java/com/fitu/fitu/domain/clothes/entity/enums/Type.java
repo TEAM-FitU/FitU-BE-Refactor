@@ -7,13 +7,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public enum Type {
     TOP, // 상의
     BOTTOM, // 하의
-    ONEPIECE; // 원피스
+    ONEPIECE, // 원피스
+    MANUAL_SELECTION; // 매핑되는 값이 없을 때 수동 선택을 위한 기본값
 
     @JsonCreator
-    public static Type fromJson(String jsonValue) {
+    public static Type fromJson(final String jsonValue) {
         return Arrays.stream(Type.values())
                 .filter(type -> type.name().equalsIgnoreCase(jsonValue))
                 .findFirst()
-                .orElse(null);
+                .orElse(MANUAL_SELECTION);
     }
 }

@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.fitu.fitu.domain.clothes.dto.request.ClothesAnalysisRequest;
-import com.fitu.fitu.domain.clothes.dto.request.ClothesFilterRequest;
+import com.fitu.fitu.domain.clothes.dto.request.ClothesAndUserInfoRequest;
+import com.fitu.fitu.domain.clothes.dto.request.ClothesFilterRequest; 
 import com.fitu.fitu.domain.clothes.dto.request.ClothesUpdateRequest;
-import com.fitu.fitu.domain.clothes.dto.request.FinalRegistrationRequest;
-import com.fitu.fitu.domain.clothes.dto.request.newClothesRequest;
+import com.fitu.fitu.domain.clothes.dto.request.NewClothesRequest;
 import com.fitu.fitu.domain.clothes.dto.response.AiAnalysisResponse;
 import com.fitu.fitu.domain.clothes.dto.response.ClothesListResponse;
 import com.fitu.fitu.domain.clothes.dto.response.ClothesSuccessResponse;
@@ -30,23 +31,24 @@ import com.fitu.fitu.domain.clothes.service.RegistrationOrchestrator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RestController
-@RequestMapping("/clothes")
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@RequestMapping("/clothes")
+@RestController
 public class ClothesController {
 
     private final ClothesService clothesService;
     private final RegistrationOrchestrator registrationOrchestrator;
 
-    // 파일이 포함된 요청 - @ModelAttribute 사용
     @PostMapping("/image-analysis")
     public ResponseEntity<ClothesSuccessResponse<AiAnalysisResponse>> analyzeClothes(
-            @ModelAttribute final ClothesAnalysisRequest request) {
+            @RequestParam("clothesImage") final MultipartFile clothesImage) {
         log.info("의류 AI 분석 요청");
-        final AiAnalysisResponse result = clothesService.analyzeClothes(request);
+        final AiAnalysisResponse result = clothesService.analyzeClothes(clothesImage);
         log.info("AI 의류 분석 완료");
-        return ResponseEntity.ok(ClothesSuccessResponse.of("의류 AI 분석이 완료되었습니다.", result));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ClothesSuccessResponse.of("의류 AI 분석이 완료되었습니다.", result));
     }
 
     /**
@@ -55,11 +57,11 @@ public class ClothesController {
      * UserService에서 UUID 생성하여 반환
      */
     @PostMapping("/registration")
-    public ResponseEntity<ClothesSuccessResponse<String>> saveFinalClothesAndUserInfo(
-            @ModelAttribute final FinalRegistrationRequest request) {
+    public ResponseEntity<ClothesSuccessResponse<String>> saveClothesAndUserInfo(
+            @ModelAttribute final ClothesAndUserInfoRequest request) {
 
-        log.info("의류 및 사용자 정보 최종 저장 요청");
-        final String registrationResponse = registrationOrchestrator.saveFinalClothesAndUserInfo(request);
+        log.info("의류 및 사용자 정보 저장 요청");
+        final String registrationResponse = registrationOrchestrator.saveClothesAndUserInfo(request);
         // log.info("의류 및 사용자 정보 저장 완료 - 사용자 ID: {}", registrationResponse.userId());
         // 사용자 uuid값 반환. 나중에 사용자 uuid값 사용
         return ResponseEntity
@@ -73,7 +75,7 @@ public class ClothesController {
     @PostMapping
     public ResponseEntity<ClothesSuccessResponse<Void>> saveUserClothes(
             @RequestHeader(name = "Fitu-User-UUID", required = true) final String userId,
-            @ModelAttribute final newClothesRequest request) {
+            @ModelAttribute final NewClothesRequest request) {
 
         log.info("새로운 의류 등록 요청 - 사용자 ID: {}", userId);
         clothesService.saveUserClothes(userId, request);
@@ -94,7 +96,9 @@ public class ClothesController {
         final List<ClothesListResponse> response = clothesService.getUserClothesList(userId);
         log.info("사용자 의류 목록 조회 완료 - 의류 개수: {}", response.size());
 
-        return ResponseEntity.ok(ClothesSuccessResponse.of("사용자 의류가 조회되었습니다.", response));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ClothesSuccessResponse.of("사용자 의류가 조회되었습니다.", response));
 
     }
 
@@ -110,7 +114,9 @@ public class ClothesController {
         log.info("필터링된 사용자 의류 목록 조회 요청 - 사용자 ID: {}", userId);
         final List<ClothesListResponse> response = clothesService.getUserClothesListWithFilters(userId, filterRequest);
         log.info("필터링된 사용자 의류 목록 조회 완료 - 의류 개수: {}", response.size());
-        return ResponseEntity.ok(ClothesSuccessResponse.of("필터링된 사용자 의류 목록이 조회되었습니다.", response));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ClothesSuccessResponse.of("필터링된 사용자 의류 목록이 조회되었습니다.", response));
     }
 
     /**
@@ -125,8 +131,9 @@ public class ClothesController {
         log.info("의류 정보 수정 요청 - 의류 ID: {}, 사용자 ID: {}", clothesId, userId);
         final ClothesUpdateResponse response = clothesService.updateClothes(clothesId, request, userId);
         log.info("의류 정보 수정 완료");
-
-        return ResponseEntity.ok(ClothesSuccessResponse.of("의류 정보가 수정되었습니다.", response));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ClothesSuccessResponse.of("의류 정보가 수정되었습니다.", response));
     }
 
     /**
@@ -140,7 +147,9 @@ public class ClothesController {
         log.info("의류 삭제 요청 - 의류 ID: {}, 사용자 ID: {}", clothesId, userId);
         clothesService.deleteClothes(clothesId, userId);
         log.info("의류 삭제 완료");
-        return ResponseEntity.ok(ClothesSuccessResponse.of("의류 정보가 삭제되었습니다."));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ClothesSuccessResponse.of("의류 정보가 삭제되었습니다."));
     }
 
 }

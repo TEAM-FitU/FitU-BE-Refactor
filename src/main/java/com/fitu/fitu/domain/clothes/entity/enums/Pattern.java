@@ -14,13 +14,14 @@ public enum Pattern {
     GEOMETRIC, // 기하학
     PLANTS, // 식물
     STRIPE, // 줄무늬
-    SYMBOL; // 심볼
+    SYMBOL, // 심볼
+    MANUAL_SELECTION; // 매핑되는 값이 없을 때 수동 선택을 위한 기본값
 
     @JsonCreator
-    public static Pattern fromJson(String jsonValue) {
+    public static Pattern fromJson(final String jsonValue) {
         return Arrays.stream(Pattern.values())
                 .filter(pt -> pt.name().equalsIgnoreCase(jsonValue))
                 .findFirst()
-                .orElse(null);
+                .orElse(MANUAL_SELECTION);
     }
 }

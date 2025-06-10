@@ -7,8 +7,8 @@ import java.util.function.Supplier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fitu.fitu.domain.clothes.dto.request.ClothesAndUserInfoRequest;
 import com.fitu.fitu.domain.clothes.dto.request.ClothesRequest;
-import com.fitu.fitu.domain.clothes.dto.request.FinalRegistrationRequest;
 import com.fitu.fitu.domain.clothes.entity.enums.Type;
 import com.fitu.fitu.global.error.ErrorCode;
 import com.fitu.fitu.global.error.exception.BusinessException;
@@ -17,9 +17,9 @@ import com.fitu.fitu.infra.s3.ClothesS3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Service
 public class RegistrationOrchestrator {
 
     private final ClothesService clothesService;
@@ -31,7 +31,7 @@ public class RegistrationOrchestrator {
      * UserService에서 UUID 생성 및 사용자 정보 저장
      */
     @Transactional
-    public String saveFinalClothesAndUserInfo(FinalRegistrationRequest request) {
+    public String saveClothesAndUserInfo(ClothesAndUserInfoRequest request) {
         try {
 
             validateClothesItems(request.clothesItems());
@@ -58,7 +58,7 @@ public class RegistrationOrchestrator {
                         clothesItem.color());
             }
 
-            return "9f4d3e1a-7c42-4c23-9f36-6beecb27b214"; // 나중에 사용자 uuid값으로 변경
+            return "9f4d3e1a-7c42-4c23-9f36-6beecb27b214";
 
         } catch (Exception e) {
             log.error("의류 및 사용자 정보 저장 중 오류 발생 - 오류: {}", e.getMessage(), e);
