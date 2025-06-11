@@ -28,6 +28,7 @@ import com.fitu.fitu.domain.clothes.service.ClothesService;
 import com.fitu.fitu.domain.clothes.service.RegistrationOrchestrator;
 import com.fitu.fitu.infra.ai.clothes.AiAnalysisResponse;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,7 +59,7 @@ public class ClothesController {
      */
     @PostMapping("/registration")
     public ResponseEntity<ClothesSuccessResponse<String>> saveClothesAndUserInfo(
-            @ModelAttribute final ClothesAndUserInfoRequest request) {
+            @Valid @ModelAttribute final ClothesAndUserInfoRequest request) {
 
         log.info("의류 및 사용자 정보 저장 요청");
         final String registrationResponse = registrationOrchestrator.saveClothesAndUserInfo(request);
