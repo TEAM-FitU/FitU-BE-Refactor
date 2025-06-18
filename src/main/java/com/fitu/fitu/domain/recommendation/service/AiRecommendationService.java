@@ -2,6 +2,7 @@ package com.fitu.fitu.domain.recommendation.service;
 
 import com.fitu.fitu.domain.clothes.exception.ClothesNotFoundException;
 import com.fitu.fitu.domain.recommendation.dto.request.RecommendOutfitRequest;
+import com.fitu.fitu.domain.recommendation.dto.response.AiRecommendationResponse;
 import com.fitu.fitu.domain.recommendation.entity.AiRecommendation;
 import com.fitu.fitu.domain.recommendation.entity.Content;
 import com.fitu.fitu.domain.recommendation.exception.NoRecommendationException;
@@ -10,12 +11,13 @@ import com.fitu.fitu.domain.recommendation.service.WeatherService.Weather;
 import com.fitu.fitu.domain.user.exception.UserNotFoundException;
 import com.fitu.fitu.global.error.ErrorCode;
 import com.fitu.fitu.infra.ai.recommendation.AiRecommendationApiClient;
-import com.fitu.fitu.infra.ai.recommendation.AiRecommendationResponse;
+import com.fitu.fitu.infra.ai.recommendation.AiRecommendationApiResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -30,19 +32,21 @@ public class AiRecommendationService {
     private static final String ERROR_NO_MATCH = "NO_MATCH";
 
     @Transactional
-    public AiRecommendation recommendOutfit(final String userId, final RecommendOutfitRequest requestDto) {
+    public AiRecommendationResponse recommendOutfit(final String userId, final RecommendOutfitRequest requestDto) {
         final Weather weather = weatherService.getWeather(requestDto.date(), requestDto.place());
 
-        final AiRecommendationResponse aiRecommendationResponse = aiRecommendationApiClient.getAiRecommendation(userId, requestDto, weather);
+        final AiRecommendationApiResponse aiRecommendationApiResponse = aiRecommendationApiClient.getAiRecommendation(userId, requestDto, weather);
 
-        validateAiRecommendationResponse(aiRecommendationResponse);
+        validateAiRecommendationResponse(aiRecommendationApiResponse);
 
-        final AiRecommendation aiRecommendation = getAiRecommendation(userId, aiRecommendationResponse);
+        final AiRecommendation aiRecommendation = getAiRecommendation(userId, aiRecommendationApiResponse);
 
-        return aiRecommendationRepository.save(aiRecommendation);
+        aiRecommendationRepository.save(aiRecommendation);
+
+        return AiRecommendationResponse.of(aiRecommendation, getClothesImageUrls(aiRecommendationApiResponse));
     }
 
-    private void validateAiRecommendationResponse(final AiRecommendationResponse response) {
+    private void validateAiRecommendationResponse(final AiRecommendationApiResponse response) {
         final String resultMsg = response.getHeader().getResultMsg();
 
         if (resultMsg.equals(ERROR_USER_NOT_FOUND)) {
@@ -58,16 +62,29 @@ public class AiRecommendationService {
         }
     }
 
-    private AiRecommendation getAiRecommendation(final String userId, final AiRecommendationResponse aiRecommendationResponse) {
-        final AiRecommendationResponse.Body body = aiRecommendationResponse.getBody();
-        final List<AiRecommendationResponse.RecommendationItem> result = body.getResult();
+    private AiRecommendation getAiRecommendation(final String userId, final AiRecommendationApiResponse aiRecommendationAPIResponse) {
+        final AiRecommendationApiResponse.Body body = aiRecommendationAPIResponse.getBody();
+        final List<AiRecommendationApiResponse.RecommendationItem> result = body.getResult();
 
         return AiRecommendation.builder()
                 .userId(userId)
                 .summary(body.getSummary())
+                .weather(body.getWeather())
                 .content1(new Content(result.getFirst().getCombination(), result.getFirst().getSelected(), result.getFirst().getReason(), result.getFirst().getVirtualTryonImage()))
                 .content2(new Content(result.get(1).getCombination(), result.get(1).getSelected(), result.get(1).getReason(), result.get(1).getVirtualTryonImage()))
                 .content3(new Content(result.getLast().getCombination(), result.getLast().getSelected(), result.getLast().getReason(), result.getLast().getVirtualTryonImage()))
                 .build();
+    }
+
+    private List<List<String>> getClothesImageUrls(final AiRecommendationApiResponse aiRecommendationApiResponse) {
+        return aiRecommendationApiResponse.getBody().getResult().stream()
+                .map(this::getClothesImageUrlFromRecommendationItem)
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getClothesImageUrlFromRecommendationItem(final AiRecommendationApiResponse.RecommendationItem item) {
+        return item.getClothing_links().stream()
+                .map(AiRecommendationApiResponse.ClothesItem::getImage_url)
+                .collect(Collectors.toList());
     }
 }
