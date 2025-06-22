@@ -72,8 +72,18 @@ jobs:
             echo "${{ secrets.ENV }}" | base64 -d > .env
             
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}:${{ secrets.DOCKER_IMAGE_TAG }}
+            
+            cd /home/ubuntu
+            
+            export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+            export DOCKER_IMAGE=${{ secrets.DOCKER_IMAGE }}
+            export DOCKER_IMAGE_TAG=${{ secrets.DOCKER_IMAGE_TAG }}
 
             docker-compose -f docker-compose.yml down
+
+            docker-compose -f docker-compose.yml up -d
+
+            docker image prune -af
 
             docker-compose -f docker-compose.yml up -d
 
